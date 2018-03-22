@@ -6,7 +6,7 @@ import { loadGifs } from '../actions';
 class GifList extends Component {
 
   componentWillMount() {
-    this.props.load();
+    this.props.load(this.props.match.params.limit);
   }
 
   render() {
@@ -25,6 +25,6 @@ class GifList extends Component {
 }
 
 const mapStateToProps = (state) => ({ gifs: state.gifs, status: state.status });
-const mapDispatchToProps = (dispatch) => ({ load: (gifs) => dispatch(loadGifs) });
+const mapDispatchToProps = (dispatch) => ({ load: (limit) => dispatch(loadGifs(limit)) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GifList);
