@@ -1,28 +1,19 @@
 import React, { Component } from 'react';
-import Gif from './Gif';
 import { connect } from 'react-redux';
+import Gif from './Gif';
+import { loadGifs } from '../actions';
 
 class GifList extends Component {
 
   componentWillMount() {
-    const apiKey = 'CpAF0AM2qwD9R5zJj9tsM7gBQOEpWRBO';
-    const limit = 8;
-
-    fetch(`http://api.giphy.com/v1/gifs/trending?api_key=${apiKey}&limit=${limit}`)
-      .then(response => response.json())
-      .then(objects =>
-        objects.data.map(obj => {
-          return ({
-            id: obj.id,
-            title: obj.title,
-            url: obj.images.downsized_medium.url
-          });
-        })
-      )
-      .then(gifs => this.props.loaded(gifs));
+    this.props.load();
   }
 
   render() {
+    if (this.props.status === 'LOADING')
+      return (<p>Loading</p>);
+    if (this.props.status === 'ERROR')
+      return (<p>ERROR</p>);
     const components = this.props.gifs.map(gif => <Gif url={gif.url} title={gif.title} key={gif.id}/>);
     return (
       <section className='GifList'>
@@ -33,7 +24,7 @@ class GifList extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({ gifs: state.gifs });
-const mapDispatchToProps = (dispatch) => ({ loaded: (gifs) => dispatch({ type: 'GIFS_LOADED', gifs}) });
+const mapStateToProps = (state) => ({ gifs: state.gifs, status: state.status });
+const mapDispatchToProps = (dispatch) => ({ load: (gifs) => dispatch(loadGifs) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GifList);
