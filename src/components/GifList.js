@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
 import Gif from './Gif';
+import { connect } from 'react-redux';
 
 class GifList extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      gifs: []
-    };
-  }
 
   componentWillMount() {
     const apiKey = 'CpAF0AM2qwD9R5zJj9tsM7gBQOEpWRBO';
@@ -25,11 +19,11 @@ class GifList extends Component {
           });
         })
       )
-      .then(gifs => this.setState({ gifs }));
+      .then(gifs => this.props.loaded(gifs));
   }
 
   render() {
-    const components = this.state.gifs.map(gif => <Gif url={gif.url} title={gif.title} key={gif.id}/>);
+    const components = this.props.gifs.map(gif => <Gif url={gif.url} title={gif.title} key={gif.id}/>);
     return (
       <section className='GifList'>
         <h1>Trends</h1>
@@ -39,4 +33,7 @@ class GifList extends Component {
   }
 }
 
-export default GifList;
+const mapStateToProps = (state) => ({ gifs: state.gifs });
+const mapDispatchToProps = (dispatch) => ({ loaded: (gifs) => dispatch({ type: 'GIFS_LOADED', gifs}) });
+
+export default connect(mapStateToProps, mapDispatchToProps)(GifList);
